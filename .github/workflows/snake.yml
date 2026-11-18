@@ -1,0 +1,29 @@
+# 贪吃蛇：定时吃掉贡献格子，生成 SVG 到 output 分支
+# push 到 master 后自动跑一次；之后每天 0 点（UTC）自动更新
+name: Snake
+
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Platane/snk/svg-only@v3
+        with:
+          github_user_name: ChangHsinYuan
+          outputs: dist/github-contribution-grid-snake.svg
+
+      - uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
